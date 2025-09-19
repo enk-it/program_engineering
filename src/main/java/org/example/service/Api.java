@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import org.example.builder.Employee;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -35,14 +34,10 @@ public class Api {
         return result;
     }
 
-    public Employee getUser () throws IOException {
+    public JsonNode getUser () throws IOException {
         List<JsonNode> users = getUsers();
-        JsonNode userJson = users.getFirst();
 
-        return Employee.builder()
-                .name(String.valueOf(userJson.get("name")))
-                .email(String.valueOf(userJson.get("email")))
-                .build();
+        return users.getFirst();
     }
 
 }

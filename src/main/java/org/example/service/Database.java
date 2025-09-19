@@ -20,7 +20,7 @@ public class Database {
             """);
     }
 
-    private void insertDate() throws SQLException {
+    private void insertData() throws SQLException {
         PreparedStatement ps = conn.prepareStatement(
                 "INSERT INTO employee(name,email,gender,birthday) VALUES (?,?,?,?)");
         ps.setString(1, "Alice");
@@ -36,7 +36,7 @@ public class Database {
         ps.executeUpdate();
     }
 
-    private void readData() throws SQLException {
+    public void readData() throws SQLException {
         PreparedStatement ps = conn.prepareStatement(
                 "SELECT id, name, email, gender, birthday FROM employee ORDER BY id");
         ResultSet rs = ps.executeQuery();
@@ -53,11 +53,16 @@ public class Database {
     public Database () throws SQLException {
         conn = DriverManager.getConnection(url, "sa", "");
         createTables();
-        insertDate();
+        insertData();
     }
 
-    public void getUser () throws SQLException {
-        readData();
+    public ResultSet getUser () throws SQLException {
+        PreparedStatement ps = conn.prepareStatement(
+                "SELECT id, name, email, gender, birthday FROM employee ORDER BY id;");
+        ResultSet rs = ps.executeQuery();
+        rs.first();
+
+        return rs;
     }
 
 

@@ -1,5 +1,6 @@
 package org.example;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
@@ -9,12 +10,11 @@ import org.example.service.Api;
 import org.example.service.Database;
 import org.example.service.Form;
 
-import javax.xml.crypto.Data;
 import java.io.IOException;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Objects;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
 
     public static Employee hardCodeBuilder() {
@@ -23,7 +23,11 @@ public class Main {
 
     public static Employee apiBuilder() throws IOException{
         Api api = new Api();
-        return api.getUser();
+        JsonNode userJson = api.getUser();
+        return Employee.builder()
+                .name(String.valueOf(userJson.get("name")))
+                .email(String.valueOf(userJson.get("email")))
+                .build();
     }
 
     public static Employee formBuilder() throws Exception {
@@ -41,23 +45,38 @@ public class Main {
         return form.result();
     }
 
-    public static void dbBuilder () throws SQLException {
+    public static Employee dbBuilder () throws SQLException {
         Database db = new Database();
-        db.getUser();
+        ResultSet user = db.getUser();
+
+        Gender gender;
+
+        if (Objects.equals(user.getString("gender"), "MALE")) {
+            gender = Gender.Male;
+        }
+        else {
+            gender = Gender.Female;
+        }
+
+        return Employee.builder()
+                .name(user.getString("name"))
+                .email(user.getString("email"))
+                .date(user.getString("birthday"))
+                .gender(gender)
+                .build();
     }
 
 
 
     public static void main(String[] args) throws Exception {
-//        Employee emp1 = hardCodeBuilder();
-//        Employee emp2 = apiBuilder();
-//        Employee emp3 = formBuilder();
+        Employee emp1 = hardCodeBuilder();
+        Employee emp2 = apiBuilder();
+        Employee emp3 = formBuilder();
+        Employee emp4 = dbBuilder();
 
-        dbBuilder();
-
-//        System.out.println(emp1);
-//        System.out.println(emp2);
-//        System.out.println(emp3);
-
+        System.out.println(emp1);
+        System.out.println(emp2);
+        System.out.println(emp3);
+        System.out.println(emp4);
     }
 }

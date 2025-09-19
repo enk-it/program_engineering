@@ -1,5 +1,7 @@
 package org.example.builder;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 
@@ -25,8 +27,33 @@ public class Employee {
             return this;
         }
 
+        public Builder date(String dateRaw) {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+            Date date;
+
+            try {
+                date = sdf.parse(dateRaw);
+            } catch (ParseException e) {
+                throw new RuntimeException(e);
+            }
+            this.date = date;
+            return this;
+        }
+
         public Builder gender(Gender gender) {
             this.gender = gender;
+            return this;
+        }
+
+        public Builder gender(String genderRaw) {
+            if (genderRaw.equalsIgnoreCase("male") || genderRaw.equalsIgnoreCase("мужчина")) {
+                this.gender = Gender.Male;
+            }
+            else if (genderRaw.equalsIgnoreCase("female") || genderRaw.equalsIgnoreCase("женщина")) {
+                this.gender = Gender.Female;
+            }
+
             return this;
         }
 
