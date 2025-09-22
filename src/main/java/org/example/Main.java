@@ -13,7 +13,6 @@ import org.example.service.Form;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Objects;
 
 public class Main {
 
@@ -31,8 +30,14 @@ public class Main {
     }
 
     public static Employee formBuilder() throws Exception {
-        Server server = new Server(8081);
+        final int port = 54001;
+
+        Server server = new Server(port);
+
+        System.out.println("http://127.0.0.1:" + port + "/builder");
+
         Form form = new Form(server);
+
 
         ServletContextHandler handler = new ServletContextHandler();
         handler.addServlet(new ServletHolder(form), "/builder");
@@ -49,20 +54,12 @@ public class Main {
         Database db = new Database();
         ResultSet user = db.getUser();
 
-        Gender gender;
-
-        if (Objects.equals(user.getString("gender"), "MALE")) {
-            gender = Gender.Male;
-        }
-        else {
-            gender = Gender.Female;
-        }
 
         return Employee.builder()
                 .name(user.getString("name"))
                 .email(user.getString("email"))
                 .date(user.getString("birthday"))
-                .gender(gender)
+                .gender(user.getString("gender"))
                 .build();
     }
 
