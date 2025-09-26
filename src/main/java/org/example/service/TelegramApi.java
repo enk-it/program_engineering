@@ -3,18 +3,28 @@ package org.example.service;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.request.SendMessage;
+import com.pengrad.telegrambot.request.SendSticker;
 import com.pengrad.telegrambot.response.SendResponse;
+import org.example.dto.TelegramPost;
+import org.example.interfaces.IPost;
+import org.example.interfaces.ISocial;
 
 import static org.example.constants.Constants.TELEGRAM_API_KEY;
+import static org.example.constants.Constants.TELEGRAM_CHAT_ID;
 
-public class TelegramApi {
+public class TelegramApi implements ISocial {
     private final TelegramBot bot = new TelegramBot(TELEGRAM_API_KEY);
 
-    public void sendMessage(String message, long chatId) {
-        SendResponse response = bot.execute(new SendMessage(chatId, message));
+    private void sendMessage(String message) {
+        SendResponse response = bot.execute(new SendMessage(TELEGRAM_CHAT_ID, message));
     }
 
-    public void listen() {
+    private void sendSticker(String stickerUrl) {
+        SendResponse response = bot.execute(new SendSticker(TELEGRAM_CHAT_ID, stickerUrl));
+        System.out.println(response);
+    }
+
+    private void listen() {
         bot.setUpdatesListener(updates -> {
             System.out.println(updates);
             return UpdatesListener.CONFIRMED_UPDATES_ALL;
@@ -28,5 +38,22 @@ public class TelegramApi {
             }
         });
 
+    }
+
+    @Override
+    public void publish(IPost post) {
+        if (!(post instanceof TelegramPost)) {
+            throw new RuntimeException();
+        }
+
+        TelegramPost tgPost = (TelegramPost) post;
+
+        if (tgPost.text != null) {
+            sendMessage(tgPost.text);
+        }
+
+        if (tgPost.mediaUrl != null) {
+            sendSticker(tgPost.mediaUrl);
+        }
     }
 }

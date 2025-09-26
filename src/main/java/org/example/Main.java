@@ -1,10 +1,12 @@
 package org.example;
 
 
+import org.example.dto.TelegramPost;
+import org.example.dto.VkPost;
+import org.example.service.PostFactory;
 import org.example.service.TelegramApi;
 import org.example.service.VKApi;
 
-import static org.example.constants.Constants.TELEGRAM_CHAT_ID;
 
 public class Main {
 
@@ -12,7 +14,16 @@ public class Main {
         TelegramApi bot = new TelegramApi();
         VKApi vkBot = new VKApi();
 
-        bot.sendMessage("ASDADA", TELEGRAM_CHAT_ID);
-        vkBot.postToWall("ASDADA");
+        TelegramPost tgPost = PostFactory.createTelegramPost("Привет!", "https://upload.wikimedia.org/wikipedia/commons/3/3e/Tree-256x256.png");
+        VkPost vkPost = PostFactory.createVkPost("Привет!");
+
+
+        bot.publish(
+            tgPost
+        );
+        vkBot.publish(
+            vkPost
+        );
+
     }
 }

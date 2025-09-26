@@ -1,5 +1,9 @@
 package org.example.service;
 
+import org.example.dto.VkPost;
+import org.example.interfaces.IPost;
+import org.example.interfaces.ISocial;
+
 import java.net.URI;
 import java.net.URLEncoder;
 import java.net.http.HttpClient;
@@ -9,9 +13,9 @@ import java.nio.charset.StandardCharsets;
 
 import static org.example.constants.Constants.*;
 
-public class VKApi {
+public class VKApi implements ISocial {
 
-    public void postToWall(String message) throws Exception {
+    private void postToWall(String message) {
         HttpClient client = HttpClient.newHttpClient();
 
         String params = "owner_id=-" + GROUP_ID +
@@ -27,9 +31,24 @@ public class VKApi {
         HttpRequest request = builder
                 .build();
 
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
-        System.out.println("Ответ VK API: " + response.body());
+        try {
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            System.out.println("Ответ VK API: " + response.body());
+        } catch (Exception e) {
+            System.out.println(e);
+        }
     }
 
+    @Override
+    public void publish(IPost post) {
+        if (!(post instanceof VkPost)) {
+            throw new RuntimeException();
+        }
+
+        VkPost vkPost = (VkPost) post;
+
+        if (vkPost.text != null) {
+            postToWall(vkPost.text);
+        }
+    }
 }
