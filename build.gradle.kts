@@ -26,6 +26,9 @@ dependencies {
     implementation("org.eclipse.jetty:jetty-server:11.0.24")
     implementation("org.eclipse.jetty:jetty-servlet:11.0.24")
     runtimeOnly("com.h2database:h2:2.2.224")
+
+    implementation("io.github.cdimascio:dotenv-java:3.0.0")
+    implementation("com.github.pengrad:java-telegram-bot-api:9.2.0")
 }
 
 tasks.test {
